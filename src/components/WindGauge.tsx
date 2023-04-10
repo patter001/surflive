@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
+import "@fortawesome/fontawesome-free/css/all.css"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import windImage from "../images/wind.png"
 
 const buoyUrl = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775792&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
@@ -48,7 +50,6 @@ export function WindGauge({data} : {data: Wind[]}){
     return (
         <>
         <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:"red", transform: `rotate(${lastEntry.s}deg)`}}></i>
-        {/* <img src={windImage} style={{transform: `rotate(${lastEntry.s}deg)`, colored:"red"}}/> */}
         <div>{lastEntry.s}</div>
         </>
     )
