@@ -8,7 +8,10 @@ const packeryStation = "https://api.tidesandcurrents.noaa.gov/api/prod/datagette
 const portAStation = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
 
 interface Wind {
-    d: string; // degrees, example: 54.0
+    /* 
+    degrees: example: 54.0 
+    */
+    d: string;
     dr: string; // direction, example: NE
     f: string; // ?? example: 0,0
     g: string; // gusts, example: 14.58 (in knots)
@@ -60,12 +63,16 @@ export function WindGaugePortA(){
 export function WindGauge({data} : {data: Wind[]}){
     const lastEntry = data[data.length-1]
     const boxStyle: CSSStyleDeclaration  = {
-        backgroundColor: "rgba(255,255,255,.25)",
+        backgroundColor: "rgba(255,255,255,.3)",
         textAlign: "center"
     }
     const speedStyle: CSSStyleDeclaration = {
         color: "blue",
         fontSize: "40px"
+    }
+    const updatedStyle: CSSStyleDeclaration = {
+        color: "blue",
+        fontSize: "10px" 
     }
     console.log(lastEntry)
     const mph = Math.round(Number(lastEntry.s)* 1.150779)
@@ -73,8 +80,12 @@ export function WindGauge({data} : {data: Wind[]}){
     return (
         <>
         <div style={boxStyle}>
-            <div><span style={speedStyle}>{mph} mph</span></div>
-            <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${lastEntry.s}deg)`}}></i>
+            <div>
+                <div>
+                    <span style={speedStyle}>{mph} mph</span><br/><span style={updatedStyle}>{lastEntry.t}</span>
+                </div>
+                 <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${lastEntry.s}deg)`}}></i>
+            </div>
         </div>
         </>
     )
