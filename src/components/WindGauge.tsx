@@ -76,15 +76,16 @@ export function WindGauge({data} : {data: Wind[]}){
     }
     console.log(lastEntry)
     const mph = Math.round(Number(lastEntry.s)* 1.150779)
+    const gusts = Math.round(Number(lastEntry.g)* 1.150779)
     const arrowColor = "blue";
     return (
         <>
         <div style={boxStyle}>
             <div>
                 <div>
-                    <span style={speedStyle}>{mph} mph</span><br/><span style={updatedStyle}>{lastEntry.t}</span>
+                    <span style={speedStyle}>{mph}-{gusts} mph </span><br/><span style={updatedStyle}>{lastEntry.t}</span>
                 </div>
-                 <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${lastEntry.s}deg)`}}></i>
+                 <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${lastEntry.d}deg)`}}/>
             </div>
         </div>
         </>
