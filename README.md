@@ -39,6 +39,10 @@ This one is north of PortA jetty
 * https://www.ndbc.noaa.gov/station_page.php?station=anpt2
 * https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json
 
+# Freeport (close to surfside)
+
+https://www.ndbc.noaa.gov/station_page.php?station=fpst2
+
 # Where data comes from:
 
 
