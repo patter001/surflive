@@ -1,3 +1,7 @@
+# View
+
+https://patter001.github.io/surflive/
+
 # Running
 
 To run this you have to run both the server AND the CORS proxy
