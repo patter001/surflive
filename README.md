@@ -1,3 +1,7 @@
+# View
+
+https://patter001.github.io/surflive/
+
 # Running
 
 To run this you have to run both the server AND the CORS proxy
@@ -38,6 +42,10 @@ Missing 7 digit number needed for API, this one is south of port a jetty:
 This one is north of PortA jetty
 * https://www.ndbc.noaa.gov/station_page.php?station=anpt2
 * https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json
+
+# Freeport (close to surfside)
+
+https://www.ndbc.noaa.gov/station_page.php?station=fpst2
 
 # Where data comes from:
 
