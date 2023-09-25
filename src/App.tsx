@@ -1,9 +1,13 @@
 import * as React from "react";
 import {useState, useMemo, useCallback} from "react"
-import {WavePage} from "./components/WaveBarChart"
-import {TidePage, MemoTidePage} from "./components/TideChart"
+import { WaveInfo42020 } from "./components/SwellFromBuoy"
 import { WindGaugePackery, WindGaugePortA } from "./components/WindGauge";
 import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
+import {
+    QueryClient,
+    QueryClientProvider,
+  } from '@tanstack/react-query';
+const queryClient = new QueryClient()
 
 export function MobileApp () {
     const packeryImage = new URL("./images/packery.jpg", import.meta.url)
@@ -20,6 +24,9 @@ export function MobileApp () {
                 <WindGaugePortA/>
                 </div> 
             </div> 
+            <div>
+                <WaveInfo42020/>
+            </div>
         </div>        
     )   
 }
@@ -39,6 +46,9 @@ export function WebApp () {
                 <WindGaugePortA/>
                 </div> 
             </div> 
+            {/* <div>
+                <WaveInfo42020/>
+            </div> */}
         </div>        
     )   
 }
@@ -50,14 +60,14 @@ export function App() {
     const packeryImage = new URL("./images/packery.jpg", import.meta.url)
     const portAImage = new URL("./images/portA.jpg", import.meta.url)
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <BrowserView>
                 <WebApp/>
             </BrowserView>
             <MobileView>
                 <MobileApp/>
             </MobileView>
-        </>       
+        </QueryClientProvider>       
     )   
 }
 

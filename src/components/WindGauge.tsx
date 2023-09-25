@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
+import { useQuery } from "@tanstack/react-query";
 import "@fortawesome/fontawesome-free/css/all.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import windImage from "../images/wind.png"
 
-const packeryStation = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775792&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
-const portAStation = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
+const packeryStation = "/api/prod/datagetter?date=today&station=8775792&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
+const portAStation =   "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
+
+const packeryWind = "8775792";
+const portAwind = "8775241";
+const wind_api = ""
 
 interface Wind {
     /* 
@@ -19,35 +24,75 @@ interface Wind {
     t: string; // Date time string, format example: "2023-04-09 18:06"
 }
 
-export function WindGaugePackery(){
-    const [windData, setWindData] = useState(null)
-    useEffect(()=>{
-        axios.get(packeryStation).then((result)=>{
+const arrowColor = "blue";
+
+function useWindStation(station){
+    const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=${station}&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json`
+
+    const query = async () => {
+        return await axios.get(url).then((result)=>{
             console.log(result.data)
-            setWindData(result.data.data)
+            if(!result.data.data){
+                console.log("Missing data from buoy")
+                throw Error("Missing data from buoy")
+            }
+            return result.data.data
         })
-    },[])
-    if(!windData){
-        return(<div>Loading..</div>)
+    }
+    return useQuery({
+        queryKey: [station],
+        queryFn: query
+    })
+}
+
+export function WindGaugePackery(){
+
+    const wind = useWindStation(packeryWind);
+
+    if(wind.error){
+        return (<div color={"white"}>Error fetching wind data</div>)
+    } else if(wind.isLoading){
+        return(<div color={"white"}>Loading..</div>)
+    } else if (wind.data){
+        return(<WindGauge data={wind.data}/>);
     } else {
-        return(<WindGauge data={windData}/>)
+        return(<div color={"white"}>Unknown..</div>)
     }
 }
 
 export function WindGaugePortA(){
-    const [windData, setWindData] = useState(null)
-    useEffect(()=>{
-        axios.get(portAStation).then((result)=>{
-            console.log(result.data)
-            setWindData(result.data.data)
-        })
-    },[])
-    if(!windData){
-        return(<div>Loading..</div>)
+
+    const wind = useWindStation(portAwind);
+
+    if(wind.error){
+        return (<WindLabel><p>Error fetching data...</p></WindLabel>)
+    } else if(wind.isLoading){
+        return(<WindLabel><p>Loading...</p></WindLabel>);
+    } else if (wind.data){
+        return(<WindGauge data={wind.data}/>);
     } else {
-        return(<WindGauge data={windData}/>)
+        return(<WindLabel><p>Unknown status...</p></WindLabel>)
     }
 }
+
+function WindArrow({degrees} : {degrees: string}){
+    return <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${degrees}deg)`}}/>
+}
+
+function WindLabel({children}:{children: React.Node[] | React.Node}){
+    const boxStyle: CSSStyleDeclaration  = {
+        backgroundColor: "rgba(255,255,255,.3)",
+        textAlign: "center",
+        color: arrowColor,
+        fontSize: "40px"
+    }
+    return (
+        <div style={boxStyle}>
+            {children}
+        </div>
+    )
+}
+
 
 
 /*
@@ -62,33 +107,29 @@ export function WindGaugePortA(){
 // Displays Data from a NOAA Boy
 export function WindGauge({data} : {data: Wind[]}){
     const lastEntry = data[data.length-1]
-    const boxStyle: CSSStyleDeclaration  = {
-        backgroundColor: "rgba(255,255,255,.3)",
-        textAlign: "center"
-    }
     const speedStyle: CSSStyleDeclaration = {
-        color: "blue",
+        color: arrowColor,
         fontSize: "40px"
     }
     const updatedStyle: CSSStyleDeclaration = {
-        color: "blue",
+        color: arrowColor,
         fontSize: "10px" 
     }
     console.log(lastEntry)
     const mph = Math.round(Number(lastEntry.s)* 1.150779)
     const gusts = Math.round(Number(lastEntry.g)* 1.150779)
-    const arrowColor = "blue";
     return (
-        <>
-        <div style={boxStyle}>
+        <WindLabel>
             <div>
                 <div>
-                    <span style={speedStyle}>{mph}-{gusts} mph </span><br/><span style={updatedStyle}>{lastEntry.t}</span>
+                    <span style={speedStyle}>{mph}-{gusts} mph </span><br/>
+                    <span style={updatedStyle}>{lastEntry.t}</span>
                 </div>
-                 <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${lastEntry.d}deg)`}}/>
+                <div>
+                 <WindArrow degrees={lastEntry.d}/>
+                 </div>
             </div>
-        </div>
-        </>
+        </WindLabel>
     )
 
 }
