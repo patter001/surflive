@@ -32,7 +32,7 @@ export function MobileApp () {
                     </div> 
                 </div> 
             </div>
-            <div style={squareStyleTB}>
+            <div style={{width: "100%", height:"50%", alignItems: "center", justifyContent: "center"}}>
                 <WaveInfo42020 count={4}/>
             </div>
         </div>        
