@@ -11,26 +11,28 @@ import "./App.css";
 
 const queryClient = new QueryClient()
 
-const squareStyle = {backgroundSize: "cover", backgroundRepeat: "no-repeat", width: "100%", height:"50%", flexGrow: 1 }
+const squareStyleTB = {  width: "100%", height:"50%", flexGrow: 1,  display:"flex" }
+const squareStyleLR = { width: "50%", height:"100%", flexGrow: 1 }
+const imageBackground = {backgroundSize: "cover", backgroundRepeat: "no-repeat"}
 
 export function MobileApp () {
     const packeryImage = new URL("./images/packery.jpg", import.meta.url)
     const portAImage = new URL("./images/portA.jpg", import.meta.url)
     return (
-        <div style={{ justifyContent: "space-around", width: "100%", height: "100vh"}}>
-            <div style={squareStyle}>
-                <div style={{ backgroundImage:`url(${packeryImage})`, ... squareStyle}}>
+        <div style={{ flexDirection: "column", width: "100%", height: "100vh"}}>
+            <div style={squareStyleTB}>
+                <div style={{ backgroundImage:`url(${packeryImage})`, ...imageBackground, ... squareStyleLR}}>
                     <div style={{marginLeft: "auto"}}>
                         <WindGaugePackery/>
                     </div> 
                 </div> 
-                <div style={{ backgroundImage:`url(${portAImage})`, ... squareStyle}}>
+                <div style={{ backgroundImage:`url(${portAImage})`, ...imageBackground, ... squareStyleLR}}>
                     <div style={{marginLeft: "auto"}}>
                     <WindGaugePortA/>
                     </div> 
                 </div> 
             </div>
-            <div style={squareStyle}>
+            <div style={squareStyleTB}>
                 <WaveInfo42020 count={4}/>
             </div>
         </div>        
