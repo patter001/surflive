@@ -7,66 +7,38 @@ import {
     QueryClient,
     QueryClientProvider,
   } from '@tanstack/react-query';
+import {WaveChartExample } from "./components/AreaChartExample"
 const queryClient = new QueryClient()
+
+const squareStyle = {backgroundSize: "cover", backgroundRepeat: "no-repeat", width: "100%", height:"33%", flexGrow: 1 }
 
 export function MobileApp () {
     const packeryImage = new URL("./images/packery.jpg", import.meta.url)
     const portAImage = new URL("./images/portA.jpg", import.meta.url)
     return (
         <div style={{ justifyContent: "space-around", width: "100%", height: "100vh"}}>
-            <div style={{ backgroundImage:`url(${packeryImage})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", width: "100%", height:"50%", flexGrow: 1 }}>
+            <div style={{ backgroundImage:`url(${packeryImage})`, ... squareStyle}}>
                 <div style={{marginLeft: "auto"}}>
                     <WindGaugePackery/>
                 </div> 
             </div> 
-            <div style={{ backgroundImage:`url(${portAImage})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", width: "100%", height:"50%", flexGrow: 1}}>
+            <div style={{ backgroundImage:`url(${portAImage})`, ... squareStyle}}>
                 <div style={{marginLeft: "auto"}}>
                 <WindGaugePortA/>
                 </div> 
             </div> 
-            <div>
-                <WaveInfo42020/>
+            <div style={squareStyle}>
+                <WaveInfo42020 count={3}/>
             </div>
         </div>        
     )   
 }
 
-export function WebApp () {
-    const packeryImage = new URL("./images/packery-orig.jpg", import.meta.url)
-    const portAImage = new URL("./images/portA.jpg", import.meta.url)
-    return (
-        <div style={{display: "flex", width: "100%"}}>
-            <div style={{ backgroundImage:`url(${packeryImage})`, backgroundSize: "cover", width: "50%", height:"600px", }}>
-                <div style={{marginLeft: "auto"}}>
-                    <WindGaugePackery/>
-                </div> 
-            </div> 
-            <div style={{ backgroundImage:`url(${portAImage})`, backgroundSize: "cover", width: "50%", height:"600px"}}>
-                <div style={{marginLeft: "auto"}}>
-                <WindGaugePortA/>
-                </div> 
-            </div> 
-            {/* <div>
-                <WaveInfo42020/>
-            </div> */}
-        </div>        
-    )   
-}
 
 export function App() {
-    // return (
-    //     <MobileApp/>
-    // )
-    const packeryImage = new URL("./images/packery.jpg", import.meta.url)
-    const portAImage = new URL("./images/portA.jpg", import.meta.url)
     return (
         <QueryClientProvider client={queryClient}>
-            <BrowserView>
-                <WebApp/>
-            </BrowserView>
-            <MobileView>
-                <MobileApp/>
-            </MobileView>
+            <MobileApp/>
         </QueryClientProvider>       
     )   
 }

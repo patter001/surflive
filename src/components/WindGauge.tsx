@@ -1,53 +1,15 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { useQuery } from "@tanstack/react-query";
+import React, { CSSProperties, ReactElement} from "react"
 import "@fortawesome/fontawesome-free/css/all.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import windImage from "../images/wind.png"
+import { Wind, usePackaryWind, usePortAWind } from "../queries/WindQueries";
 
-const packeryStation = "/api/prod/datagetter?date=today&station=8775792&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
-const portAStation =   "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=8775241&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json"
-
-const packeryWind = "8775792";
-const portAwind = "8775241";
-const wind_api = ""
-
-interface Wind {
-    /* 
-    degrees: example: 54.0 
-    */
-    d: string;
-    dr: string; // direction, example: NE
-    f: string; // ?? example: 0,0
-    g: string; // gusts, example: 14.58 (in knots)
-    s: string; // speed, example: 13.41
-    t: string; // Date time string, format example: "2023-04-09 18:06"
-}
 
 const arrowColor = "blue";
 
-function useWindStation(station){
-    const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=${station}&product=wind&datum=STND&time_zone=lst_ldt&units=english&format=json`
-
-    const query = async () => {
-        return await axios.get(url).then((result)=>{
-            console.log(result.data)
-            if(!result.data.data){
-                console.log("Missing data from buoy")
-                throw Error("Missing data from buoy")
-            }
-            return result.data.data
-        })
-    }
-    return useQuery({
-        queryKey: [station],
-        queryFn: query
-    })
-}
 
 export function WindGaugePackery(){
 
-    const wind = useWindStation(packeryWind);
+    const wind = usePackaryWind();
 
     if(wind.error){
         return (<div color={"white"}>Error fetching wind data</div>)
@@ -62,7 +24,7 @@ export function WindGaugePackery(){
 
 export function WindGaugePortA(){
 
-    const wind = useWindStation(portAwind);
+    const wind = usePortAWind();
 
     if(wind.error){
         return (<WindLabel><p>Error fetching data...</p></WindLabel>)
@@ -79,12 +41,12 @@ function WindArrow({degrees} : {degrees: string}){
     return <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${degrees}deg)`}}/>
 }
 
-function WindLabel({children}:{children: React.Node[] | React.Node}){
-    const boxStyle: CSSStyleDeclaration  = {
+function WindLabel({children}:{children: ReactElement[] | ReactElement}){
+    const boxStyle: CSSProperties  = {
         backgroundColor: "rgba(255,255,255,.3)",
         textAlign: "center",
         color: arrowColor,
-        fontSize: "40px"
+        fontSize: "40px",
     }
     return (
         <div style={boxStyle}>
@@ -94,24 +56,16 @@ function WindLabel({children}:{children: React.Node[] | React.Node}){
 }
 
 
-
-/*
-/* Colored Icon 
-<div class="icon colored"></div>
-// .colored {
-//     background-color: orange; /* defines the background color of the image */
-//     mask: url(https://img.icons8.com/stackoverflow) no-repeat center / contain;
-//     -webkit-mask: url(https://img.icons8.com/stackoverflow) no-repeat center / contain;
-//   }
-
 // Displays Data from a NOAA Boy
 export function WindGauge({data} : {data: Wind[]}){
     const lastEntry = data[data.length-1]
-    const speedStyle: CSSStyleDeclaration = {
+    const speedStyle: CSSProperties = {
         color: arrowColor,
-        fontSize: "40px"
+        fontSize: "40px",
+        marginLeft: "10px",
+        marginRight: "10px",
     }
-    const updatedStyle: CSSStyleDeclaration = {
+    const updatedStyle: CSSProperties = {
         color: arrowColor,
         fontSize: "10px" 
     }
@@ -122,12 +76,13 @@ export function WindGauge({data} : {data: Wind[]}){
         <WindLabel>
             <div>
                 <div>
-                    <span style={speedStyle}>{mph}-{gusts} mph </span><br/>
-                    <span style={updatedStyle}>{lastEntry.t}</span>
+                    <WindArrow degrees={lastEntry.d} />   
+                    <span style={speedStyle}>{mph}-{gusts} mph</span> 
+                    <span style={updatedStyle}>{lastEntry.t}</span> 
                 </div>
-                <div>
-                 <WindArrow degrees={lastEntry.d}/>
-                 </div>
+                {/* <div>
+                     <span style={updatedStyle}>{lastEntry.t}</span>
+                 </div> */}
             </div>
         </WindLabel>
     )
