@@ -43,7 +43,7 @@ function WindArrow({ degrees }: { degrees: string }) {
 
 function WindLabel({ children }: { children: ReactElement[] | ReactElement }) {
     const boxStyle: CSSProperties = {
-        backgroundColor: "rgba(255,255,255,.3)",
+        backgroundColor: "rgba(255,255,255,.6)",
         textAlign: "center",
         color: arrowColor,
     }
