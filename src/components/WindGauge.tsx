@@ -38,7 +38,7 @@ export function WindGaugePortA(){
 }
 
 function WindArrow({degrees} : {degrees: string}){
-    return <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "48px", color:arrowColor, transform: `rotate(${degrees}deg)`}}/>
+    return <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "80px", color:arrowColor, transform: `rotate(${degrees}deg)`}}/>
 }
 
 function WindLabel({children}:{children: ReactElement[] | ReactElement}){
@@ -61,13 +61,13 @@ export function WindGauge({data} : {data: Wind[]}){
     const lastEntry = data[data.length-1]
     const speedStyle: CSSProperties = {
         color: arrowColor,
-        fontSize: "40px",
+        fontSize: "80px",
         marginLeft: "10px",
         marginRight: "10px",
     }
     const updatedStyle: CSSProperties = {
         color: arrowColor,
-        fontSize: "10px" 
+        fontSize: "15px" 
     }
     console.log(lastEntry)
     const mph = Math.round(Number(lastEntry.s)* 1.150779)
@@ -80,9 +80,7 @@ export function WindGauge({data} : {data: Wind[]}){
                     <span style={speedStyle}>{mph}-{gusts} mph</span> 
                     <span style={updatedStyle}>{lastEntry.t}</span> 
                 </div>
-                {/* <div>
-                     <span style={updatedStyle}>{lastEntry.t}</span>
-                 </div> */}
+
             </div>
         </WindLabel>
     )
