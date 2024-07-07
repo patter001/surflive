@@ -14,6 +14,35 @@ const buoy4020withCORS = corsProxy + buoy42020
 2023 04 12 23 40  1.7  1.5  9.1  0.8  4.0 ENE  NE    AVERAGE  5.6  73
 2023 04 12 23 10  1.9  1.7  9.1  0.9  5.0 ENE  NE    AVERAGE  5.8  76
 */
+export function windDirectionToDegrees(direction) {
+    // Define a mapping of wind directions to their corresponding degrees
+    const directionMap = {
+        'N': 0,
+        'NNE': 22.5,
+        'NE': 45,
+        'ENE': 67.5,
+        'E': 90,
+        'ESE': 112.5,
+        'SE': 135,
+        'SSE': 157.5,
+        'S': 180,
+        'SSW': 202.5,
+        'SW': 225,
+        'WSW': 247.5,
+        'W': 270,
+        'WNW': 292.5,
+        'NW': 315,
+        'NNW': 337.5
+    };
+
+    // Convert the input direction to uppercase to ensure case-insensitivity
+    const upperCaseDirection = direction.toUpperCase();
+
+    // Look up the direction in the map and return the corresponding degrees
+    // If the direction is not found, return -1 to indicate an invalid direction
+    return directionMap[upperCaseDirection] !== undefined ? directionMap[upperCaseDirection] : -1;
+}
+
 
 interface BouyData {
     YY: string,
@@ -27,17 +56,22 @@ interface BouyData {
     WWH: string,
     SwD: string,
     WWD: string,
+    WWP: string,
     APD: string,
     MWD: string,
 }
 
 export interface ProcessedWaveData {
     dateTime: string,
-    sigWaveHeight: number
-    swellWaveHeight: number,
-    windWaveHeight: number,
+    sigWaveHeight: number,
     averagePeriod: number,
-    medianDirection: string
+    medianDirection: number    
+    swellWaveHeight: number,
+    swellPeriod: number,
+    swellDirection: number
+    windWaveHeight: number,
+    windWaveDirection: number,
+    windWavePeriod: number
 }
 
 function metersToFeet(meters): number {
@@ -95,16 +129,17 @@ function convertGMTToCT(gmtString) {
 
     // Apply the offset to convert GMT to CT
     const ctDate = new Date(gmtDate.getTime() + offset * 60 * 1000);
-    console.log(ctDate)
 
     // Extract the month, day, hour, and minute
     const month = String(ctDate.getMonth() + 1).padStart(2, '0');
     const day = String(ctDate.getDate()).padStart(2, '0');
     let hours = ctDate.getHours()
     let am = "am"
-    if (hours > 12) {
-        hours = hours - 12;
+    if (hours >= 12) {
         am = "pm"
+        if(hours>12){
+            hours = hours - 12;
+        }
     }
     const hoursStr = String(hours).padStart(2, ' ');
     const minutes = String(ctDate.getUTCMinutes()).padStart(2, '0');
@@ -134,15 +169,19 @@ export function useWaveStation(station): UseQueryResult<ProcessedWaveData[]> {
             const csv = textBlockToListOfObjects(result.data)
             console.log(csv)
             // now convert to our more usable names and types
-            const converted = csv.map((row) => {
+            const converted: ProcessedWaveData[] = csv.map((row) => {
                 const dateTime = convertGMTToCT(`${row.YY}-${row.MM}-${row.DD} ${row.hh}:${row.mm}:00.000`)
                 return {
                     dateTime: dateTime,
                     sigWaveHeight: metersToFeet(Number(row.WVHT)),
-                    swellWaveHeight: metersToFeet(Number(row.SwH)),
-                    windWaveHeight: metersToFeet(Number(row.WWH)),
                     averagePeriod: Number(row.APD),
-                    medianDirection: row.MWD,
+                    medianDirection: Number(row.MWD),                    
+                    swellWaveHeight: metersToFeet(Number(row.SwH)),
+                    swellPeriod: Number(row.SwP),
+                    swellDirection: windDirectionToDegrees(row.SwD),
+                    windWaveHeight: metersToFeet(Number(row.WWH)),
+                    windWavePeriod: Number(row.WWP),
+                    windWaveDirection: windDirectionToDegrees(row.WWD),
                 }
             })
             return converted

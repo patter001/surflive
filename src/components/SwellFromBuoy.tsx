@@ -2,7 +2,7 @@ import React from "react"
 import {Table} from "antd"
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
-import { ProcessedWaveData, useWaveStationCC } from "../queries/WaveQueries";
+import { ProcessedWaveData, useWaveStationCC, windDirectionToDegrees } from "../queries/WaveQueries";
 
 export function WaveInfo42020 ({count}:{count: number}){
     const waveData = useWaveStationCC();
@@ -17,41 +17,61 @@ export function WaveInfo42020 ({count}:{count: number}){
     return(<WaveInfo data={waveData.data} count={count}/>)
     
 }
+
+const renderFeet = (v) => `${v} ft`
+
+function renderSummaryInfo(text, record: ProcessedWaveData, indexarams){
+    const waveHeight = renderFeet(record.sigWaveHeight)
+    const waveDegrees = record.medianDirection
+    const wavePeriod = record.averagePeriod
+    return (<>
+    {waveHeight} @ {wavePeriod} <WaveArrow degrees={waveDegrees}/>
+    </> 
+    )
+}
+function renderSwellInfo(text, record: ProcessedWaveData, indexarams){
+    const waveHeight = renderFeet(record.swellWaveHeight)
+    const waveDegrees = record.swellDirection
+    const wavePeriod = record.swellPeriod
+    return (<>
+    {waveHeight} @ {wavePeriod} <WaveArrow degrees={waveDegrees}/>
+    </> 
+    )
+}
+
+function renderWindWaveInfo(text, record: ProcessedWaveData, indexarams){
+    const waveHeight = renderFeet(record.windWaveHeight)
+    const waveDegrees = record.windWaveDirection
+    const wavePeriod = record.windWavePeriod
+    return (<>
+    {waveHeight} @ {wavePeriod} <WaveArrow degrees={waveDegrees}/>
+    </> 
+    )
+}
+
 function WaveInfo ({data, count} : {data: ProcessedWaveData[], count: number}){
 
     const requiredData = data.slice(0, count)
-    const renderFeet = (v) => `${v} ft`
     const columns = [
         {
             title: 'Date',
             dataIndex: 'dateTime',
         },
         {
-            title: 'Wave',
+            title: 'Averages',
             dataIndex: 'sigWaveHeight',
-            render: renderFeet
+            render: renderSummaryInfo
         },
         {
-            title: 'SwellH',
+            title: 'Swell',
             dataIndex: 'swellWaveHeight',
-            render: renderFeet
+            render: renderSwellInfo
         },        
         {
-            title: 'WindH',
+            title: 'Wind',
             dataIndex: 'windWaveHeight',
-            render: renderFeet
-        }, 
-        {
-            title: 'Period',
-            dataIndex: 'averagePeriod',
-        },
-        {
-            title: 'Direction',
-            dataIndex: 'medianDirection',
-            render: (direction) => {
-                return (<WaveArrow degrees={direction}/>)
-            }
-        },          
+            render: renderWindWaveInfo
+        }       
     ]
 
     return (
@@ -60,6 +80,6 @@ function WaveInfo ({data, count} : {data: ProcessedWaveData[], count: number}){
     </div>)
 }
 
-function WaveArrow({degrees} : {degrees: string}){
+function WaveArrow({degrees} : {degrees: number}){
     return <i className={'fas fa-long-arrow-alt-down'} style={{fontSize: "24px", color:"blue", transform: `rotate(${degrees}deg)`}}/>
 }
