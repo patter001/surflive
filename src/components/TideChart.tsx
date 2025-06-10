@@ -20,7 +20,12 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 // interval=30&
 // format=json
 
-let NUM_TIDE_DAYS=4;
+type TideData = {
+    t: string, // time in ISO format
+    v: number // value in feet
+}
+
+let NUM_TIDE_DAYS=1;
 
 let timerId = 0;
 
@@ -99,21 +104,18 @@ export function TideChart (props) {
                 width={760}
                 height={480}
                 data={swellData}
-                // margin={{
-                // top: 10,
-                // right: 30,
-                // left: 0,
-                // bottom: 0
-                // }}
             >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="t" 
+                <XAxis 
+                    dataKey="t" 
                     domain={['auto', 'auto']}
-                    //scale="time"
-                    //type="number"
-                    fill="white"
-                    interval={47}
+                    interval={5}
                     tick={{fill: "white"}}
+                    tickFormatter={(tick) => {
+                        const date = new Date(tick);
+                        return date.getHours() % 3 === 0 ? `${date.getHours()}` : ''; // Show labels only for 3-hour intervals
+                    }}
+                    tickLine={false} // Remove tick lines for intervals without labels
                 />
                 <YAxis 
                     tick={{fill: "white"}}
