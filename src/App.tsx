@@ -8,6 +8,7 @@ import {
   } from '@tanstack/react-query';
 
 import "./App.css";
+import { TidePage } from "./components/TideChart";
 
 const queryClient = new QueryClient()
 
@@ -32,8 +33,13 @@ export function MobileApp () {
                     </div> 
                 </div> 
             </div>
-            <div style={{width: "100%", height:"50%", alignItems: "center", justifyContent: "center"}}>
-                <WaveInfo42020 count={4}/>
+            <div style={squareStyleTB}>
+                <div style={{width: "50%", height:"50%", alignItems: "center", justifyContent: "center"}}>
+                    <WaveInfo42020 count={4}/>
+                </div>
+                <div style={{width: "50%", height:"50%", alignItems: "center", justifyContent: "center"}}>
+                    <TidePage/>
+                </div>
             </div>
         </div>        
     )   
