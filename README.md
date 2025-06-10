@@ -2,13 +2,8 @@
 
 https://patter001.github.io/surflive/
 
-# Running
+This may/may not look great on mobile. It predominantly aimed for a certain raspberry pi display
 
-To run this you have to run both the server AND the CORS proxy
-
-lcp --proxyUrl http://magicseaweed.com/ &
-http-server -a localhost -p 80
- 
  # Buoy API how to:
 
  https://www.ndbc.noaa.gov/rt_data_access.shtml
